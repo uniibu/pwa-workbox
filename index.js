@@ -36,11 +36,11 @@ function loadScriptExtension(scriptExtension) {
 }
 // Check the correct path of the build files
 // Due to changes here https://github.com/nuxt/nuxt.js/pull/3758
-function getBuildDir() {
-  let buildDir = path.resolve(this.options.buildDir, 'dist', 'client');
+function getBuildDir(buildDir) {
+  buildDir = path.resolve(buildDir, 'dist', 'client');
   if (!existsSync(buildDir)) {
     // for backwards compatibility
-    buildDir = path.resolve(this.options.buildDir, 'dist');
+    buildDir = path.resolve(buildDir, 'dist');
   }
   return buildDir;
 }
@@ -70,7 +70,7 @@ function getOptions(moduleOptions) {
     clientsClaim: true,
     skipWaiting: true,
     globPatterns: ['**/*.{js,css}'],
-    globDirectory: getBuildDir(),
+    globDirectory: getBuildDir(this.options.buildDir),
     modifyUrlPrefix: {
       '': helpers.fixUrl(publicPath)
     },
@@ -82,11 +82,11 @@ function getOptions(moduleOptions) {
       {
         urlPattern: helpers.fixUrl(`${publicPath}/.*`),
         handler: 'cacheFirst'
-      }],
+      }
+    ],
     runtimeCaching: []
   };
-
-  const options = mixin({}, defaults, moduleOptions, this.options.workbox );
+  const options = mixin({}, defaults, moduleOptions, this.options.workbox);
   // Optionally cache other routes for offline
   if (options.offline && !options.offlinePage) {
     options._runtimeCaching.push({
@@ -158,7 +158,7 @@ function emitAssets(options) {
   // Write assets after build
   const hook = () => {
     assets.forEach(({ source, dst }) => {
-      writeFileSync(path.resolve(getBuildDir(), dst), source, 'utf-8');
+      writeFileSync(path.resolve(getBuildDir(this.options.buildDir), dst), source, 'utf-8');
     });
   };
   if (this.nuxt.hook) {
