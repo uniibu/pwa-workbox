@@ -1,6 +1,6 @@
 {
   "name": "@unibtc/workbox",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "workbox module for nuxtjs",
   "private": false,
   "engines": {
