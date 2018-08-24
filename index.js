@@ -48,6 +48,7 @@ function getBuildDir(buildDir) {
 function getOptions(moduleOptions) {
   // Router Base
   const routerBase = this.options.router.base;
+  debug('initial publicPath %s', `${routerBase}/${this.options.build.publicPath}`);
   let publicPath = helpers.fixUrl(`${routerBase}/${this.options.build.publicPath}`);
   debug('fixedUrl piublicPath %s', publicPath);
   if (helpers.isUrl(this.options.build.publicPath)) {
@@ -158,6 +159,8 @@ function emitAssets(options) {
   // Write assets after build
   const hook = () => {
     assets.forEach(({ source, dst }) => {
+      debug('getBuildDir %s', getBuildDir(this.options.buildDir));
+      debug('dst %s', dst);
       writeFileSync(path.resolve(getBuildDir(this.options.buildDir), dst), source, 'utf-8');
     });
   };
@@ -173,7 +176,9 @@ function emitAssets(options) {
   if (options.dev) {
     wbPath = wbPath.replace(/prod/g, 'dev');
   }
-  options.wbDst = helpers.fixUrl(`${options.publicPath}/${emitAsset(wbPath, `workbox${options.dev ? '.dev' : ''}`)}`);
+
+  options.wbDst = helpers.fixUrl(`/${this.options.build.publicPath}/${emitAsset(wbPath, `workbox${options.dev ? '.dev' : ''}`)}`);
+  debug('wbDst %s', options.wbDst);
 }
 // =============================================
 // workboxInject

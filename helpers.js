@@ -1,4 +1,4 @@
-exports.fixUrl = url => url.replace(/\/\//g, '/').replace(':/', '://');
+exports.fixUrl = url => url.replace(/\/{2,}/g, '/').replace(':/', '://');
 exports.isUrl = url => url.indexOf('http') === 0 || url.indexOf('//') === 0;
 exports.pick = function pick(obj, keys) {
   return keys.map(k => k in obj ? {
