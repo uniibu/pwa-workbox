@@ -1,0 +1,27 @@
+{
+  "name": "@unibtc/workbox",
+  "version": "1.0.0",
+  "description": "workbox module for nuxtjs",
+  "private": false,
+  "engines": {
+    "node": ">=8 <=10"
+  },
+  "main": "index.js",
+  "keywords": [
+    "workbox nuxtjs"
+  ],
+  "author": "Uni Sayo <unibtc@gmail.com>",
+  "license": "MIT",
+  "repository": "https://github.com/uniibu/workbox",
+  "bugs": {
+    "url": "https://github.com/uniibu/workbox/issues"
+  },
+  "homepage": "https://github.com/uniibu/workbox#readme",
+  "devDependencies": {
+    "eslint": "^5.1.0"
+  },
+  "dependencies": {
+    "hash-sum": "^1.0.2",
+    "workbox-build": "^3.4.1"
+  }
+}
