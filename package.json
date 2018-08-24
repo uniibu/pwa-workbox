@@ -12,11 +12,18 @@
   ],
   "author": "Uni Sayo <unibtc@gmail.com>",
   "license": "MIT",
-  "repository": "https://github.com/uniibu/workbox",
+  "repository": "https://github.com/uniibu/pwa-workbox",
   "bugs": {
-    "url": "https://github.com/uniibu/workbox/issues"
+    "url": "https://github.com/uniibu/pwa-workbox/issues"
   },
-  "homepage": "https://github.com/uniibu/workbox#readme",
+  "homepage": "https://github.com/uniibu/pwa-workbox#readme",
+  "scripts": {
+    "patch": "npm version patch && npm publish",
+    "minor": "npm version minor && npm publish",
+    "major": "npm version major && npm publish",
+    "postpublish": "git push origin master --follow-tags",
+    "lint": "eslint --fix --ext .js ."
+  },
   "devDependencies": {
     "eslint": "^5.1.0"
   },
