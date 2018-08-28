@@ -12,14 +12,26 @@ module.exports = function nuxtWorkbox(moduleOptions) {
   if (this.options.dev) {
     return;
   }
+  let options;
   const hook = () => {
     debug('Adding workbox');
-    const options = getOptions.call(this, moduleOptions);
+    options = getOptions.call(this, moduleOptions);
     workboxInject.call(this, options);
     setHeaders.call(this, options);
     emitAssets.call(this, options);
     addTemplates.call(this, options);
   };
+  this.extendBuild((config, { isClient }) => {
+    if (!isClient) {
+      return;
+    }
+    if (!options.clientBuildDir) {
+      options.clientBuildDir = config.output.path;
+    }
+    if (!options.globDirectory) {
+      options.globDirectory = options.clientBuildDir;
+    }
+  });
   this.nuxt.hook ? this.nuxt.hook('build:before', hook) : this.nuxt.plugin('build', hook);
 };
 // =============================================
@@ -33,16 +45,6 @@ function loadScriptExtension(scriptExtension) {
     }
     return null;
   }
-}
-// Check the correct path of the build files
-// Due to changes here https://github.com/nuxt/nuxt.js/pull/3758
-function getBuildDir(buildDir) {
-  buildDir = path.resolve(buildDir, 'dist', 'client');
-  if (!existsSync(buildDir)) {
-    // for backwards compatibility
-    buildDir = path.resolve(buildDir, 'dist');
-  }
-  return buildDir;
 }
 
 function getOptions(moduleOptions) {
@@ -71,7 +73,7 @@ function getOptions(moduleOptions) {
     clientsClaim: true,
     skipWaiting: true,
     globPatterns: ['**/*.{js,css}'],
-    globDirectory: getBuildDir(this.options.buildDir),
+    globDirectory: undefined,
     modifyUrlPrefix: {
       '': helpers.fixUrl(publicPath)
     },
@@ -159,9 +161,7 @@ function emitAssets(options) {
   // Write assets after build
   const hook = () => {
     assets.forEach(({ source, dst }) => {
-      debug('getBuildDir %s', getBuildDir(this.options.buildDir));
-      debug('dst %s', dst);
-      writeFileSync(path.resolve(getBuildDir(this.options.buildDir), dst), source, 'utf-8');
+      writeFileSync(path.resolve(options.clientBuildDir, dst), source, 'utf-8');
     });
   };
   if (this.nuxt.hook) {
@@ -176,8 +176,7 @@ function emitAssets(options) {
   if (options.dev) {
     wbPath = wbPath.replace(/prod/g, 'dev');
   }
-
-  options.wbDst = helpers.fixUrl(`/${this.options.build.publicPath}/${emitAsset(wbPath, `workbox${options.dev ? '.dev' : ''}`)}`);
+  options.wbDst = helpers.fixUrl(`/${options.publicPath}/${emitAsset(wbPath, `workbox${options.dev ? '.dev' : ''}`)}`);
   debug('wbDst %s', options.wbDst);
 }
 // =============================================
